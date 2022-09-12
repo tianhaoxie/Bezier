@@ -11,4 +11,8 @@ public:
     bezier();
     ~bezier();
     vector<vector<Vector3d>> gen_tp_surface(vector<vector<Vector3d>> &Cs, int resolution);
+    vector<vector<Vector3d>> gen_control();
+    void gen_mesh(MatrixXd& V,MatrixXi& F, const vector<vector<Vector3d>>& tp_surface);
+    void convert2matrix(const vector<vector<Vector3d>>&pts, MatrixXd& V);
+    void convert2vector(vector<vector<Vector3d>>&pts,const MatrixXd& V);
 };
