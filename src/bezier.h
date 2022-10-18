@@ -15,7 +15,7 @@ public:
     vector<vector<Vector3d>> gen_tp_surface(vector<vector<Vector3d>> &Cs, int resolution);
     vector<vector<Vector3d>> gen_control();
     Vector3d blossoming(const vector<Vector3d> & Cs, double t1, double t2, double t3);
-    MatrixXd sample_blossoming(const vector<vector<Vector3d>>& Cs, int sample_res_t , int sample_res_u,double t_min = 0, double t_max=1);
+    MatrixXd sample_blossoming(const vector<vector<Vector3d>>& Cs, int sample_res_t ,double t_min = 0, double t_max=1);
     void gen_mesh(MatrixXd& V,MatrixXi& F, const vector<vector<Vector3d>>& tp_surface);
     void convert2matrix(const vector<vector<Vector3d>>&pts, MatrixXd& V);
     void convert2matrix(const vector<Vector3d>&pts, MatrixXd& V);

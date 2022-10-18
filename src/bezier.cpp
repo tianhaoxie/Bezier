@@ -101,23 +101,50 @@ Vector3d bezier::blossoming(const vector<Vector3d> & Cs, double t1, double t2, d
     return r;
 }
 
-MatrixXd bezier::sample_blossoming(const vector<vector<Vector3d>>& Cs, int sample_res_t, int sample_res_u, double t_min, double t_max){
+
+MatrixXd bezier::sample_blossoming(const vector<vector<Vector3d>>& Cs, int sample_res_t, double t_min, double t_max){
     VectorXd t = VectorXd::LinSpaced(sample_res_t,t_min,t_max);
-    VectorXd u = VectorXd::LinSpaced(sample_res_u,0.0,1.0);
     vector<vector<double>> combinations;
     vector<double> data(3);
     vector<Vector3d> control_u(Cs.size());
+
     find_combination(t,data,combinations,0,t.size()-1,0,3);
-    MatrixXd pts = MatrixXd::Zero(combinations.size()*sample_res_u,3);
-    for (int i=0;i<sample_res_u;i++){
+    for (int i =0; i<sample_res_t; i++){
+        for (int j=0;j<sample_res_t;j++) {
+            combinations.push_back({t(i), t(j), t(j)});
+        }
+    }
+    MatrixXd pts = MatrixXd::Zero(combinations.size()*combinations.size(),3);
+    for (int i=0;i<combinations.size();i++){
         for (int j=0;j<Cs.size();j++){
-            control_u[j] = deCasteljau(Cs[j],u(i));
+            control_u[j] = blossoming(Cs[j],combinations[i][0],combinations[i][1],combinations[i][2]);
         }
         for (int j=0;j<combinations.size();j++){
             pts.row(i*combinations.size()+j) = blossoming(control_u,combinations[j][0],combinations[j][1],combinations[j][2]);
         }
 
     }
+    /*
+    int res = sample_res_t*sample_res_t*sample_res_t;
+    MatrixXd pts = MatrixXd::Zero(res*res,3);
+    MatrixXd ts = MatrixXd::Zero(res,3);
+    for (int i=0;i<sample_res_t;i++){
+        for (int j=0;j<sample_res_t;j++){
+            for (int k=0;k<sample_res_t;k++) {
+                ts.row(i*sample_res_t*sample_res_t+j*sample_res_t+k) <<t(i),t(j),t(k);
+            }
+        }
+    }
+    for (int i=0;i<res;i++){
+        for (int j=0;j<Cs.size();j++){
+            control_u[j] = blossoming(Cs[j],ts(i,0),ts(i,1),ts(i,2));
+        }
+        for (int j=0;j<res;j++){
+            pts.row(i*res+j) = blossoming(control_u,ts(j,0),ts(j,1),ts(j,2));
+        }
+
+    }
+     */
     return pts;
 }
 
