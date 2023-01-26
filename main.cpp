@@ -3,10 +3,18 @@
 #include <igl/opengl/glfw/imgui/ImGuiMenu.h>
 #include <igl/opengl/glfw/imgui/ImGuiHelpers.h>
 #include "src/bezier.h"
+#include <cmath>
 
 using namespace std;
 using namespace Eigen;
-
+void sample_color(MatrixXd& t,MatrixXd& c){
+    float tmp;
+    for (int i=0;i<t.rows();i++){
+        tmp = abs(t(i,0)-t(i,1))+abs(t(i,1)-t(i,2))+abs(abs(t(i,2)-t(i,0)));
+        tmp/=3;
+        c(i,1) = tmp;
+    }
+}
 int main(int argc, char *argv[])
 {
 
@@ -31,7 +39,7 @@ int main(int argc, char *argv[])
   RowVector3f last_mouse;
   long sel = -1;
   // Customize the menu
-  int PointSize = 6; 
+  int PointSize = 12;
   double r_c = 1.0;
   double g_c,b_c = 0.0;
   double r_t = 0.0;
@@ -71,7 +79,7 @@ int main(int argc, char *argv[])
 
     if (ImGui::CollapsingHeader("Target PC", ImGuiTreeNodeFlags_DefaultOpen)){
 
-      ImGui::InputText("Target Path", PC_path);
+      //ImGui::InputText("Target Path", PC_path);
       ImGui::InputDouble("t_max", &t_max ,0, 0, "%.2f");
       ImGui::InputDouble("t_min", &t_min ,0, 0, "%.2f");
       if (ImGui::Button("Load", ImVec2(-1,0)))
@@ -83,13 +91,17 @@ int main(int argc, char *argv[])
 
         s -> gen_mesh(V,F,sample);
 
-        target_PC = s ->sample_blossoming(fitted_control_points,20,10,t_min,t_max);
-        //plot control points
-        all_pts.resize(CP_matrix.rows()+target_PC.rows(),3);
+        //target_PC = s ->sample_blossoming(fitted_control_points,8,t_min,t_max);
+        //MatrixXd u;
+        //s ->sample_bc(fitted_control_points,20,target_PC,u);
 
-        all_pts<<CP_matrix,target_PC;
+        //plot control points
+        all_pts.resize(CP_matrix.rows(),3);
+
+        all_pts<<CP_matrix;
         pts_color_c = MatrixXd::Ones(CP_matrix.rows(),3) * color_c;
         pts_color_t = MatrixXd::Ones(target_PC.rows(),3) * color_t;
+        //sample_color(u,pts_color_t);
         all_color.resize(pts_color_c.rows()+pts_color_t.rows(),3);
         all_color << pts_color_c,pts_color_t;
         viewer.data().set_mesh(V, F);
@@ -113,14 +125,14 @@ int main(int argc, char *argv[])
       }
     }
   };
-  /*
+
   const auto & update = [&]()
   {
-    s -> convert2vector(control_points,CP_matrix);
-    sample = s -> gen_tp_surface(control_points,20);
+    s -> convert2vector(fitted_control_points,CP_matrix);
+    sample = s -> gen_tp_surface(fitted_control_points,20);
     s -> gen_mesh(V,F,sample);
     viewer.data().set_mesh(V, F);
-    viewer.data().set_points(CP_matrix, Eigen::RowVector3d(r, g, b));
+    viewer.data().set_points(CP_matrix, Eigen::RowVector3d(r_c, g_c, b_c));
     
   };
 
@@ -182,15 +194,15 @@ int main(int argc, char *argv[])
     sel = -1;
     return false;
   };
- 
+  /*
   viewer.data().set_mesh(V, F);
   viewer.data().set_face_based(true);
   //viewer.core().is_animating = true;
   //plot control points
-  
-  viewer.data().point_size = pointSize;
-  viewer.data().set_points(CP_matrix, Eigen::RowVector3d(r, g, b));
-  */
+
+  viewer.data().point_size = PointSize;
+  viewer.data().set_points(CP_matrix, Eigen::RowVector3d(r_c, g_c, b_c));
+    */
   viewer.launch();
 
 }
