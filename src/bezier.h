@@ -9,9 +9,12 @@ private:
     Vector3d deCasteljau(const vector<Vector3d>& C,double t);
     void find_combination(VectorXd& x,vector<double>& data,vector<vector<double>>&results, int start, int end, int index, int r);
     vector<Vector3d> slicing(const vector<Vector3d> ori, int start, int end);
+    MatrixX3d TriangularBezierInterpolation(const MatrixX3d& C, int d, double r, double s, double t);
 public:
     bezier();
     ~bezier();
+    MatrixX3d TriangularBezier(const MatrixX3d& C, int d, double r, double s, double t);
+    void gen_tb_surface(const MatrixX3d& C,MatrixXd& sample,MatrixXi& face,int d,int res);
     vector<vector<Vector3d>> gen_tp_surface(vector<vector<Vector3d>> &Cs, int resolution);
     vector<vector<Vector3d>> gen_control();
     Vector3d blossoming(const vector<Vector3d> & Cs, double t1, double t2, double t3);
