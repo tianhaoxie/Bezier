@@ -40,6 +40,58 @@ Vector3d bezier::deCasteljau(const vector<Vector3d>& C,double t){
     }
 }
 
+MatrixX3d bezier::TriangularBezierInterpolation(const MatrixX3d& C, int d, double r, double s, double t){
+    MatrixX3d next_level = MatrixX3d::Zero((int)((d+1)*d/2),3);
+    for (int i =0;i<d;i++){
+        int idx_now= (int)((i+1)*i/2);
+        int idx_next = i+1;
+        for (int j=idx_now;j<idx_now+idx_next;j++){
+            
+            next_level.row(j)=r*C.row(j)+s*C.row(j+idx_next)+t*C.row(j+idx_next+1);
+        }
+    }
+    
+    return next_level;
+}
+
+MatrixX3d bezier::TriangularBezier(const MatrixX3d& C, int d, double r, double s, double t){
+    MatrixX3d result = C;
+    for (int i =d; i>0;i--){
+        result = TriangularBezierInterpolation(result,i,r,s,t);
+    }
+    return result;
+}
+
+void bezier::gen_tb_surface(const MatrixX3d& C,MatrixXd& sample,MatrixXi& face,int d,int res){
+    sample = MatrixXd::Zero((res+2)*(res+1)/2,3);
+    for (int i=res;i>=0;i--){
+        for (int j=0;j<res-i+1;j++){
+            double r=(double)i/res;
+            double s=(double)j/res;
+            double t=1-r-s;
+            sample.row(((res-i+1)*(res-i))/2+j) = TriangularBezier(C,3,r,s,t);
+        }
+    }
+    face = MatrixXi::Zero(res*res,3);
+    int start;
+    for (int i=1;i<=res;i++){
+        for (int j =0;j<i;j++){
+            start = j+((i-1)*i)/2;
+            if (j==0){
+                
+                face.row((i-1)*(i-1)+j)<< start,start+i+1,start+i;
+            }
+            else{
+                face.row((i-1)*(i-1)+2*j-1)<< start,start+i+1,start+i;
+                face.row((i-1)*(i-1)+2*j)<<start,start+i,start-1;
+            }
+        }
+             
+    }
+    
+
+}
+
 vector<vector<Vector3d>> bezier::gen_tp_surface(vector<vector<Vector3d>> & Cs, int resolution){
     vector<Vector3d> temp(resolution);
     vector<vector<Vector3d>> pts(resolution);
