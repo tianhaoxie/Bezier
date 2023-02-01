@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
   MatrixXd V,CP_matrix,target_PC,all_pts,pts_color_c,pts_color_t,all_color;
   MatrixXi F;
   vector<Vector3d> sample_v;
-  s -> read_control("/home/xth/research/viewer/data/tri_patch.txt",CP_matrix);
+  s -> read_control("./tri_patch.txt",CP_matrix);
   //control_points = MatrixXd::Random(10,3)/2;
   //sample_surface(s,V,control_points,1000);
   s->gen_tb_surface(CP_matrix,V,F,3,20);
