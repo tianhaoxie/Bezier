@@ -3,10 +3,9 @@ if(TARGET igl::core)
 endif()
 
 include(FetchContent)
-set(FETCHCONTENT_SOURCE_DIR_LIBIGL "/home/xth/research/bezier/bezier_cpp/thirdparty/libigl")
 FetchContent_Declare(
     libigl
     GIT_REPOSITORY https://github.com/libigl/libigl.git
-    GIT_TAG <TARGET_SHA1>
+    GIT_TAG v2.4.0
 )
 FetchContent_MakeAvailable(libigl)
