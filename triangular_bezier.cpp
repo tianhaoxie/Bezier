@@ -129,6 +129,7 @@ int main(int argc, char *argv[])
     //s -> gen_mesh(V,F,sample);
     s->gen_tb_surface(CP_matrix,V,F,3,20);
     viewer.data().set_mesh(V, F);
+    viewer.data().set_face_based(true);
     viewer.data().set_points(CP_matrix, Eigen::RowVector3d(r_c, g_c, b_c));
     
   };
